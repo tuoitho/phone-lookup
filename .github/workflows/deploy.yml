@@ -42,7 +42,7 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.VPS_SSH_KEY }}
         script: |
-          cd /path/to/deployment
+          cd ~/deploy
           
           # Pull newest images
           docker pull ${{ secrets.DOCKER_USERNAME }}/phone-lookup-client:latest
