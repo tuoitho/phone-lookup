@@ -18,8 +18,6 @@ services:
     build: ./client
     container_name: phone-lookup-frontend
     restart: always
-    volumes:
-      - ./client/build:/app/build
     ports:
       - "80:80"
     depends_on:
