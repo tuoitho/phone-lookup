@@ -8,8 +8,6 @@ services:
     # restart: always
     env_file:
       - .env
-    volumes:
-      - ./server/phone_lookup.db:/app/phone_lookup.db
     ports:
       - "5000:5000"
     networks:
