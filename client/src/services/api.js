@@ -1,8 +1,9 @@
 import axios from 'axios';
 
 // Sử dụng biến môi trường cho API URL nếu có, mặc định là URL local
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
+// const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Dùng đường dẫn tương đối để tận dụng Nginx proxy
+const API_URL = '/api';  // Loại bỏ VITE_API_URL và localhost mặc định
 const api = axios.create({
   baseURL: API_URL,
   headers: {
