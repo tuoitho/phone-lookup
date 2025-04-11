@@ -7,7 +7,7 @@ const HomePage = () => {
     <Container>
       <Box sx={{ my: 4, textAlign: 'center' }}>
         <Typography variant="h4" component="h1" gutterBottom>
-          Tra cứu thông tin số điện thoại
+          Tra cứu thông tin số điện thoại2222222222222222222222
         </Typography>
         <Typography variant="subtitle1" color="text.secondary" paragraph>
           Nhập số điện thoại để tìm kiếm thông tin và xem đánh giá từ người dùng
