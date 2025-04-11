@@ -57,9 +57,9 @@ jobs:
           # Stop and remove existing containers
           docker-compose down
 
-          # Tạo file .env với double quote để thay thế biến
+          # Tạo file .env 
           cat > .env << EOF
-          
+
           DB_USER=${DB_USER}
           DB_PASSWORD=${DB_PASSWORD}
           DB_SERVER=${DB_SERVER}
@@ -70,7 +70,7 @@ jobs:
 
           # Tạo docker-compose.yml (giữ single quote vì có biến GitHub Secrets)
           cat > docker-compose.yml << 'EOF'
-          version: '3.8'
+          version: '3.7'
           
           services:
             client:
