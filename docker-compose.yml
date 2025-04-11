@@ -5,7 +5,7 @@ services:
   backend:
     build: ./server
     container_name: phone-lookup-backend
-    # restart: always
+    restart: always
     env_file:
       - .env
     ports:
@@ -17,7 +17,7 @@ services:
   frontend:
     build: ./client
     container_name: phone-lookup-frontend
-    # restart: always
+    restart: always
     ports:
       - "80:80"
     depends_on:
