@@ -2,7 +2,7 @@ name: Deploy to VPS
 
 on:
   push:
-    branches: [ main ]  # Thay đổi thành branch chính của bạn nếu cần (ví dụ: master)
+    branches: [ main ]
 
 jobs:
   build-and-deploy:
@@ -46,7 +46,7 @@ jobs:
         host: ${{ secrets.VPS_HOST }}
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.VPS_SSH_KEY }}
-        envs: DB_USER,DB_PASSWORD,DB_SERVER,DB_NAME  # Truyền các biến vào script
+        envs: DB_USER,DB_PASSWORD,DB_SERVER,DB_NAME  # Truyền biến vào script
         script: |
           cd ~/deploy
           
@@ -57,23 +57,24 @@ jobs:
           # Stop and remove existing containers
           docker-compose down
 
-          # Tạo file .env
-          cat > .env << 'EOL'
+          # Tạo file .env với double quote để thay thế biến
+          cat > .env << "EOF"
           DB_USER=${DB_USER}
           DB_PASSWORD=${DB_PASSWORD}
           DB_SERVER=${DB_SERVER}
           DB_NAME=${DB_NAME}
           NODE_ENV=production
           PORT=5000
-          EOL
+          EOF
 
-          # Create docker-compose file if it doesn't exist
-          cat > docker-compose.yml << 'EOL'
-          version: '3'
+          # Tạo docker-compose.yml (giữ single quote vì có biến GitHub Secrets)
+          cat > docker-compose.yml << 'EOF'
+          version: '3.8'
           
           services:
             client:
               image: ${{ secrets.DOCKER_USERNAME }}/phone-lookup-client:latest
+              container_name: phone-lookup-frontend
               restart: always
               ports:
                 - "80:80"
@@ -84,6 +85,7 @@ jobs:
             
             server:
               image: ${{ secrets.DOCKER_USERNAME }}/phone-lookup-server:latest
+              container_name: phone-lookup-backend
               restart: always
               env_file:
                 - .env
@@ -93,7 +95,7 @@ jobs:
           networks:
             app-network:
               driver: bridge
-          EOL
+          EOF
           
           # Start new containers
           docker-compose up -d
