@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  # Backend service
+  backend:
+    build: ./server
+    container_name: phone-lookup-backend
+    restart: always
+    volumes:
+      - ./server/phone_lookup.db:/app/phone_lookup.db
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    ports:
+      - "3000:3000"
+
+  # Frontend service
+  frontend:
+    build: ./client
+    container_name: phone-lookup-frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
