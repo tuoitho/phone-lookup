@@ -11,6 +11,7 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import { searchPhones } from '../services/api';
 import PhoneList from './PhoneList';
+import { toast } from 'react-toastify';
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
@@ -22,7 +23,11 @@ const SearchBar = () => {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!query.trim()) return;
-
+    // only phone 10 digits
+    if (!/^\d{10}$/.test(query)) {
+      toast.error('Số điện thoại phải có 10 chữ số!');
+      return;
+    }
     setLoading(true);
     setError(null);
     
