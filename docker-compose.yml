@@ -8,18 +8,27 @@ services:
     restart: always
     volumes:
       - ./server/phone_lookup.db:/app/phone_lookup.db
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
     ports:
-      - "3000:3000"
+      - "5000:5000"
+    networks:
+      - app-network
 
   # Frontend service
   frontend:
     build: ./client
     container_name: phone-lookup-frontend
     restart: always
+    volumes:
+      - ./client/build:/app/build
+    environment:
+      - PORT=3000
     ports:
-      - "80:80"
+      - "3000:3000"
     depends_on:
       - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
