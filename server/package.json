@@ -8,15 +8,21 @@
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["phone", "lookup", "sqlite"],
+  "keywords": [
+    "phone",
+    "lookup",
+    "sqlite"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "better-sqlite3": "^11.9.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "helmet": "^8.1.0",
     "morgan": "^1.10.0",
-    "sqlite3": "^5.1.7"
+    "mssql": "^11.0.1",
+    "react-toastify": "^11.0.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

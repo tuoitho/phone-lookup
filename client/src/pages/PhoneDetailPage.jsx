@@ -19,8 +19,11 @@ import {
   FormLabel,
   RadioGroup,
   FormControlLabel,
-  Radio
+  Radio,
+  Snackbar
 } from '@mui/material';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getPhoneDetails, addReview } from '../services/api';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -30,8 +33,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CommentIcon from '@mui/icons-material/Comment';
 
 const PhoneDetailPage = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams();  const navigate = useNavigate();
   const [phoneData, setPhoneData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -41,25 +43,21 @@ const PhoneDetailPage = () => {
     reviewer_name: ''
   });
   const [submittingReview, setSubmittingReview] = useState(false);
-  const [reviewSuccess, setReviewSuccess] = useState(false);
-
-  useEffect(() => {
-    const fetchPhoneDetails = async () => {
-      try {
-        setLoading(true);
-        const data = await getPhoneDetails(id);
-        setPhoneData(data);
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching phone details:', error);
-        setError(error.response?.data?.error || 'Không thể tải thông tin số điện thoại.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
+  const fetchPhoneDetails = async () => {
+    try {
+      setLoading(true);
+      const data = await getPhoneDetails(id);
+      setPhoneData(data);
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching phone details:', error);
+      setError(error.response?.data?.error || 'Không thể tải thông tin số điện thoại.');
+    } finally {
+      setLoading(false);
+    }
+  };  useEffect(() => {
     fetchPhoneDetails();
-  }, [id, reviewSuccess]);
+  }, [id]);
 
   const handleReviewChange = (e) => {
     const { name, value } = e.target;
@@ -74,25 +72,51 @@ const PhoneDetailPage = () => {
       ...prev,
       rating: newValue
     }));
-  };
-
-  const handleSubmitReview = async (e) => {
+  };  const handleSubmitReview = async (e) => {
     e.preventDefault();
     if (!newReview.rating) return;
 
     try {
       setSubmittingReview(true);
-      await addReview(id, newReview);
+      const response = await addReview(id, newReview);
+      
+      // Reset form
       setNewReview({
         rating: 5,
         comment: '',
         reviewer_name: ''
       });
-      setReviewSuccess(true);
-      setTimeout(() => setReviewSuccess(false), 3000);
+      
+      // Show success toast with react-toastify
+      toast.success('Đánh giá đã được gửi thành công!');
+      
+      // Add the new review to the current list without re-fetching
+      if (phoneData && response) {
+        // Create a new review object with proper structure
+        const newReviewObj = {
+          id: response.id,
+          phone_id: parseInt(id),
+          rating: response.rating,
+          comment: response.comment,
+          reviewer_name: response.reviewer_name || 'Người dùng ẩn danh',
+          created_at: response.created_at || new Date().toISOString()
+        };
+        
+        // Calculate new average rating
+        const allReviews = [...(phoneData.reviews || []), newReviewObj];
+        const sum = allReviews.reduce((acc, review) => acc + review.rating, 0);
+        const newAvgRating = sum / allReviews.length;
+        
+        // Update phoneData with new review and rating
+        setPhoneData({
+          ...phoneData,
+          reviews: allReviews,
+          avgRating: newAvgRating
+        });
+      }
     } catch (error) {
       console.error('Error submitting review:', error);
-      setError('Không thể gửi đánh giá. Vui lòng thử lại sau.');
+      toast.error('Không thể gửi đánh giá. Vui lòng thử lại sau.');
     } finally {
       setSubmittingReview(false);
     }
@@ -220,8 +244,7 @@ const PhoneDetailPage = () => {
                 multiline
                 rows={3}
               />
-              
-              <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+                <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
                 <Button 
                   type="submit" 
                   variant="contained" 
@@ -230,12 +253,6 @@ const PhoneDetailPage = () => {
                 >
                   {submittingReview ? 'Đang gửi...' : 'Gửi đánh giá'}
                 </Button>
-                
-                {reviewSuccess && (
-                  <Typography variant="body2" color="success.main" sx={{ ml: 2 }}>
-                    Đánh giá đã được gửi thành công!
-                  </Typography>
-                )}
               </Box>
             </Box>
           </Paper>
@@ -291,8 +308,9 @@ const PhoneDetailPage = () => {
               </List>
             </Paper>
           )}
-        </>
-      )}
+        </>      )}
+
+
     </Container>
   );
 };
