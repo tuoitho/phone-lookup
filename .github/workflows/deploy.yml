@@ -58,7 +58,8 @@ jobs:
           docker-compose down
 
           # Tạo file .env với double quote để thay thế biến
-          cat > .env << "EOF"
+          cat > .env << EOF
+          
           DB_USER=${DB_USER}
           DB_PASSWORD=${DB_PASSWORD}
           DB_SERVER=${DB_SERVER}
