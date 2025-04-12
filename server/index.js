@@ -22,8 +22,8 @@ const sqlConfig = {
   server: process.env.DB_SERVER,
   pool: {
     max: 10,
-    min: 0,
-    idleTimeoutMillis: 30000
+    min: 1,
+    idleTimeoutMillis: 300000000
   },
   options: {
     encrypt: true, // for Azure
